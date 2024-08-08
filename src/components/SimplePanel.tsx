@@ -3,9 +3,8 @@ import { PanelProps } from '@grafana/data';
 import { SimpleOptions } from 'types';
 import { css} from '@emotion/css';
 import { useStyles2 } from '@grafana/ui';
-import { PanelDataErrorView } from '@grafana/runtime';
+import { PanelDataErrorView,locationService } from '@grafana/runtime';
 import { GoogleMap, Marker, DrawingManager, useJsApiLoader} from '@react-google-maps/api';
-import { locationService } from '@grafana/runtime';
 
 interface Props extends PanelProps<SimpleOptions> {}
 
@@ -53,17 +52,18 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
 
   const grafanaVariableToUpdate = options?.variable
 
-  const [polygonSelection, setPolygonSelection] = useState<Array<any>>([])
-
-  if (data.series.length === 0) {
-    return <PanelDataErrorView fieldConfig={fieldConfig} panelId={id} data={data} needsStringField />;
-  }
-
+  const [polygonSelection, setPolygonSelection] = useState<any[]>([])
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: "AIzaSyCYBXr6DR2HCvtlo2Jo5c0Vlup818cCF00",
     libraries: ['drawing']
   })
+
+  if (data.series.length === 0) {
+    return <PanelDataErrorView fieldConfig={fieldConfig} panelId={id} data={data} needsStringField />;
+  }
+
+
 
   const mapContainerStyle = {
     width: `${width}px`,
@@ -76,13 +76,10 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
     zoom: 10,
   };
 
-  
+  let lats = data.series[0].fields.find(field => field.name === "latitude")?.values;
+  let longs =  data.series[0].fields.find(field => field.name === "longitude")?.values;
 
-
-  var lats = data.series[0].fields.find(field => field.name == "latitude")?.values;
-  var longs =  data.series[0].fields.find(field => field.name === "longitude")?.values;
-
-  var combined = lats?.map((lat, index) => ({
+  let combined = lats?.map((lat, index) => ({
     latitude: lat,
     longitude: longs?.[index]
   }));
@@ -111,8 +108,11 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
     locationService.partial({ [`var-${grafanaVariableToUpdate}`]: JSON.stringify([]) }, true);
   }
 
+  if (!isLoaded){
+    return <> Loading</>
+  }
+
   return (
-    isLoaded ? (
     <div className={styles.wrapper}>     
         <GoogleMap
           id="map"
@@ -142,6 +142,5 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
         <button className={styles.saveButton} onClick={updateGrafanaVariable}> Save </button>
         <button className={styles.button} onClick={onReset}> Reset </button>
     </div>
-  ) : <></>
 );
 };
