@@ -113,3 +113,4 @@ Below you can find source code for existing app plugins and other related docume
 - [`plugin.json` documentation](https://grafana.com/developers/plugin-tools/reference/plugin-json)
 - [How to sign a plugin?](https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin)
 # network-visualizer-plugin
+# Network-Visualizer-Grafana
