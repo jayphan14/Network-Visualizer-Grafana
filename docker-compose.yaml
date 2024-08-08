@@ -10,7 +10,7 @@ services:
         grafana_version: ${GRAFANA_VERSION:-10.4.0}
         development: ${DEVELOPMENT:-false}
     ports:
-      - 3001:3000/tcp
+      - 3000:3000/tcp
     volumes:
       - ./dist:/var/lib/grafana/plugins/testorg-networkvisualizer-panel
       - ./provisioning:/etc/grafana/provisioning
