@@ -18,5 +18,11 @@ export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOption
           value: variable.name,
         })),
       },
+    })
+    .addTextInput({
+      path: 'googleMapKey',
+      name: 'Google Map API Key',
+      description: 'This plugin utilizes Google Map API, please create and provide valid key to continue',
+      defaultValue: '',
     });
 });

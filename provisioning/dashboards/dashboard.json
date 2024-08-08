@@ -33,6 +33,7 @@
       },
       "id": 1,
       "options": {
+        "googleMapKey": "AIzaSyCYBXr6DR2HCvtlo2Jo5c0Vlup818cCF00",
         "seriesCountSize": "sm",
         "showSeriesCount": false,
         "text": "Default value of text input option",
@@ -56,21 +57,7 @@
   "schemaVersion": 39,
   "tags": [],
   "templating": {
-    "list": [
-      {
-        "current": {
-          "selected": false,
-          "text": "[]",
-          "value": "[]"
-        },
-        "hide": 0,
-        "name": "polygon",
-        "options": [],
-        "query": "[]",
-        "skipUrlSync": false,
-        "type": "textbox"
-      }
-    ]
+    "list": []
   },
   "time": {
     "from": "now-6h",
@@ -80,6 +67,6 @@
   "timezone": "browser",
   "title": "Network",
   "uid": "bdtf82l7w6ozke",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }

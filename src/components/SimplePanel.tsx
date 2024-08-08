@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { PanelProps } from '@grafana/data';
 import { SimpleOptions } from 'types';
-import { css} from '@emotion/css';
+import { css } from '@emotion/css';
 import { useStyles2 } from '@grafana/ui';
-import { PanelDataErrorView,locationService } from '@grafana/runtime';
-import { GoogleMap, Marker, DrawingManager, useJsApiLoader} from '@react-google-maps/api';
+import { PanelDataErrorView, locationService } from '@grafana/runtime';
+import { GoogleMap, Marker, DrawingManager, useJsApiLoader } from '@react-google-maps/api';
 
 interface Props extends PanelProps<SimpleOptions> {}
-
+const librariesNeeded = ['drawing']
 const getStyles = () => {
   return {
     wrapper: css`
@@ -50,20 +50,34 @@ const getStyles = () => {
 export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fieldConfig, id }) => {
   const styles = useStyles2(getStyles);
 
-  const grafanaVariableToUpdate = options?.variable
+  const [polygonSelection, setPolygonSelection] = useState<any[]>([]);
+  const [grafanaVariableToUpdate, setGrafanaVariableToUpdate] = useState<string>('');
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [loadError, setLoadError] = useState<any>(null);
 
-  const [polygonSelection, setPolygonSelection] = useState<any[]>([])
-  const { isLoaded } = useJsApiLoader({
+  const googleMapKey = options.googleMapKey || '';
+
+  // Initialize loader when googleMapKey changes
+  const { isLoaded: loaderLoaded, loadError: loaderError } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: "AIzaSyCYBXr6DR2HCvtlo2Jo5c0Vlup818cCF00",
-    libraries: ['drawing']
-  })
+    googleMapsApiKey: googleMapKey,
+    libraries: librariesNeeded,
+  });
+
+  useEffect(() => {
+    if (googleMapKey) {
+      setIsLoaded(loaderLoaded);
+      setLoadError(loaderError);
+    } else {
+      setIsLoaded(false);
+      setLoadError(null);
+    }
+    setGrafanaVariableToUpdate(options?.variable);
+  }, [googleMapKey, loaderLoaded, loaderError, options.variable]);
 
   if (data.series.length === 0) {
     return <PanelDataErrorView fieldConfig={fieldConfig} panelId={id} data={data} needsStringField />;
   }
-
-
 
   const mapContainerStyle = {
     width: `${width}px`,
@@ -76,71 +90,79 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
     zoom: 10,
   };
 
-  let lats = data.series[0].fields.find(field => field.name === "latitude")?.values;
-  let longs =  data.series[0].fields.find(field => field.name === "longitude")?.values;
+  let lats = data.series[0].fields.find((field) => field.name === 'latitude')?.values;
+  let longs = data.series[0].fields.find((field) => field.name === 'longitude')?.values;
 
   let combined = lats?.map((lat, index) => ({
     latitude: lat,
-    longitude: longs?.[index]
+    longitude: longs?.[index],
   }));
-  const onLoad = () => {}
+
+  const onLoad = () => {};
 
   const onPolygonComplete = (polygon: google.maps.Polygon) => {
-    setPolygonSelection([...polygonSelection , polygon])
+    setPolygonSelection([...polygonSelection, polygon]);
   };
 
   const updateGrafanaVariable = () => {
-    // Convert polygonSelection into an array of arrays of points
-    const polygonsData = polygonSelection.map(polygon => {
+    const polygonsData = polygonSelection.map((polygon) => {
       const path = polygon.getPath();
-      return path.getArray().map((latLng: { lat: () => any; lng: () => any; }) => ({
+      return path.getArray().map((latLng: { lat: () => any; lng: () => any }) => ({
         latitude: latLng.lat(),
         longitude: latLng.lng(),
       }));
     });
-  
-    // Update the Grafana variable with the serialized data
+
     locationService.partial({ [`var-${grafanaVariableToUpdate}`]: JSON.stringify(polygonsData) }, true);
   };
+
   const onReset = async () => {
-    polygonSelection.forEach(polygon => polygon.setMap(null))
-    setPolygonSelection([])
+    polygonSelection.forEach((polygon) => polygon.setMap(null));
+    setPolygonSelection([]);
     locationService.partial({ [`var-${grafanaVariableToUpdate}`]: JSON.stringify([]) }, true);
+  };
+
+  if (loadError) {
+    return <>Error loading maps</>;
   }
 
-  if (!isLoaded){
-    return <> Loading</>
+  if (!isLoaded) {
+    return <>Loading...</>;
   }
 
   return (
-    <div className={styles.wrapper}>     
-        <GoogleMap
-          id="map"
-          mapContainerStyle={mapContainerStyle}
-          zoom={10}
-          center={center}
-        >
-          <DrawingManager
-            onLoad={onLoad}
-            onPolygonComplete={onPolygonComplete} 
-            options={{
-              drawingMode: google.maps.drawing.OverlayType.POLYGON,
-              drawingControl: true,
-              drawingControlOptions: {
-                position: google.maps.ControlPosition.TOP_CENTER,
-                drawingModes: [google.maps.drawing.OverlayType.POLYGON],
-              },
-            }}
+    <div className={styles.wrapper}>
+      <GoogleMap
+        id="map"
+        mapContainerStyle={mapContainerStyle}
+        zoom={10}
+        center={center}
+      >
+        <DrawingManager
+          onLoad={onLoad}
+          onPolygonComplete={onPolygonComplete}
+          options={{
+            drawingMode: google.maps.drawing.OverlayType.POLYGON,
+            drawingControl: true,
+            drawingControlOptions: {
+              position: google.maps.ControlPosition.TOP_CENTER,
+              drawingModes: [google.maps.drawing.OverlayType.POLYGON],
+            },
+          }}
+        />
+        {combined?.map((location, index) => (
+          <Marker
+            key={index}
+            position={{ lat: location.latitude, lng: location.longitude }}
           />
-          {combined?.map((location, index) => (
-            <Marker
-              key={index}
-              position={{ lat: location.latitude, lng: location.longitude }}
-            />
-          ))}
-        </GoogleMap>
-        <button className={styles.saveButton} onClick={updateGrafanaVariable}> Save </button>
-        <button className={styles.button} onClick={onReset}> Reset </button>
+        ))}
+      </GoogleMap>
+      <button className={styles.saveButton} onClick={updateGrafanaVariable}>
+        Save
+      </button>
+      <button className={styles.button} onClick={onReset}>
+        Reset
+      </button>
     </div>
-);
+  );
 };
