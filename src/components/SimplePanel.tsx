@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PanelProps } from '@grafana/data';
 import { SimpleOptions } from 'types';
 import { css } from '@emotion/css';
 import { useStyles2 } from '@grafana/ui';
 import { PanelDataErrorView, locationService } from '@grafana/runtime';
-import { GoogleMap, Marker, DrawingManager, useJsApiLoader } from '@react-google-maps/api';
+import { GoogleMap, Marker, DrawingManager, useJsApiLoader, Libraries } from '@react-google-maps/api';
 
 interface Props extends PanelProps<SimpleOptions> {}
-const librariesNeeded = ['drawing']
+const librariesNeeded: Libraries= ['drawing']
 const getStyles = () => {
   return {
     wrapper: css`
