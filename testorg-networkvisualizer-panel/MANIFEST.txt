@@ -1,0 +1,38 @@
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+{
+  "manifestVersion": "2.0.0",
+  "signatureType": "private",
+  "signedByOrg": "jphan2",
+  "signedByOrgName": "jphan2",
+  "rootUrls": [
+    "https://jphan2.grafana.net/"
+  ],
+  "plugin": "testorg-networkvisualizer-panel",
+  "version": "1.0.0",
+  "time": 1723232223201,
+  "keyId": "7e4d0c6a708866e7",
+  "files": {
+    "LICENSE": "c5accbbd8546e94c34aed24afe689a617627d18eed5a6c48277e48db57c23851",
+    "CHANGELOG.md": "aaa78be4710ef41d56ddab1edbd180ef9f9adfea2f293109aae925dc33a1b9b3",
+    "module.js.LICENSE.txt": "e7799a86329d59255eab5dc085152a4f260e695206e610591c0298e285a23549",
+    "module.js.map": "d2af74137b8f0c0a4a6c8863184dca48877f7a9eec00d97cfbf42256c7d37f6d",
+    "plugin.json": "5af7044a589f49321257068cbeba77836e8433f64583c87bb57b14bcc68eeb3b",
+    "README.md": "d5a7bdb1ecd35301dcf60457f2a88e54f9a4ae57996b35f2bb5beb6b7afaff56",
+    "img/logo.svg": "98a8d1d868a88c645bf05ea59e3f609e0e62136f8d72e6c2b95e8c40d756054f",
+    "module.js": "821af218ee4b73219886b68f1732adaf65b8fb3b1a280d094626e747b730eb1d"
+  }
+}
+-----BEGIN PGP SIGNATURE-----
+Version: OpenPGP.js v4.10.11
+Comment: https://openpgpjs.org
+
+wrkEARMKAAYFAma2b98AIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm54kkAgkBAsBLB7dRiej1ZwMRf3iNadiraezN8nL7fXoiB4oOEPS4lXr6
+cwC1xC1bX2AkgBjfweoHbWxN6Sd54Kv0wVzyZ/UCCQEx9qNfiUsPOmofWWSc
+UCyEln/b2WGIOYd/ReqJTLT2UGTtldG1/Qy042Taglu2PUN6tLX29gzw+7pz
+4K3M2AQ14g==
+=Nlz0
+-----END PGP SIGNATURE-----
