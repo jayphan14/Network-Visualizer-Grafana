@@ -1,6 +1,14 @@
 {
   "compilerOptions": {
-    "jsx": "react"
+    "jsx": "react",
+    "esModuleInterop": true,
+    "target": "ES6",
+    "module": "commonjs",
+    "strict": true,
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true
   },
   "extends": "./.config/tsconfig.json"
 }
