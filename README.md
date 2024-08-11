@@ -1,6 +1,7 @@
-# Grafana panel plugin template
+# Network Visualizer Grafana Panel Plugins
 
-This template is a starting point for building a panel plugin for Grafana.
+This is a Custom Grafana Plugin that can consume any Grafana data source that provides Longitude and Lattitude coordinates and Visualize it on a Google Map. 
+This panel also support Polygon Selection on the map, it will update a Grafana Variable with those values and users can consume those values. These interaction features are missing in availables Panels in Grafana.
 
 ## What are Grafana panel plugins?
 
